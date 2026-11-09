@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>EUCheck Admin - Reguli de Conformitate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --card-gradient: linear-gradient(135deg, #1e293b 0%, #090d16 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; }
+
+    /* Navbar Unificat */
+    .navbar {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand { font-size: 1.25rem; font-weight: 700; color: #fff; }
+    .brand span { color: var(--accent-blue); }
+    .nav-links { display: flex; gap: 8px; align-items: center; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none; padding: 8px 14px;
+      border-radius: 8px; font-weight: 500; font-size: 0.9rem; transition: all 0.2s ease;
+    }
+    .nav-links a:hover, .nav-links a.active { color: #fff; background: rgba(255, 255, 255, 0.06); }
+
+    .container {
+      max-width: 1280px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 35px;
+    }
+    h2 { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    p { color: var(--text-muted); font-size: 0.95rem; }
+
+    .btn-create {
+      background: var(--accent-green); color: white; padding: 12px 20px;
+      border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); transition: all 0.2s;
+    }
+    .btn-create:hover { background: #059669; transform: translateY(-1px); }
+
+    /* Grid de Carduri în loc de Tabel */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .rule-card {
+      background: var(--card-gradient);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
+    }
+    .rule-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,0.15);
+      box-shadow: 0 15px 30px -5px rgba(0,0,0,0.6);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .clause-badge {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .mandatory-badge {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .optional-badge {
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .rule-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .rule-details {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .detail-row:last-child { margin-bottom: 0; }
+    .detail-label { color: var(--text-muted); font-weight: 500; }
+    .detail-value { color: #f1f5f9; font-weight: 600; text-align: right; }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+    .btn-edit {
+      flex: 1;
+      background: var(--accent-blue); color: white; padding: 8px 14px;
+      border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem;
+      text-align: center; transition: background 0.2s;
+    }
+    .btn-edit:hover { background: #2563eb; }
+    
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.15); color: #f87171; border: none;
+      padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .btn-delete:hover { background: rgba(239, 68, 68, 0.3); }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+    }
+
+    .back-link { display: inline-block; margin-top: 10px; color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+    .back-link:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar Unificat -->
+  <header class="navbar">
+    <div class="brand">EUCheck <span>Admin</span></div>
+    <nav class="nav-links">
+      <a href="/Admin">Dashboard</a>
+      <a href="/Accounts">Conturi</a>
+      <a href="/Standards">Directive UE</a>
+      <a href="/ComplianceRules" class="active">Reguli Conformitate</a>
+      <a href="/Admin/Plans">Pachete</a>
+      <a href="/Admin/Logs">Jurnal</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="header-flex">
+      <div>
+        <h2>Reguli de Conformitate UE</h2>
+        <p>Gestionează articolele, clauzele tehnice și ponderile de punctaj asociate directivelor.</p>
+      </div>
+      <a href="/ComplianceRules/Create" class="btn-create">+ Adaugă Regulă Nouă</a>
+    </div>
+
+    <div class="rules-grid">
+      <% if (typeof rules !== 'undefined' && rules.length > 0) { %>
+        <% rules.forEach(function(rule) { %>
+          <div class="rule-card">
+            <div>
+              <div class="card-top">
+                <span class="clause-badge"><%= rule.clause || rule.article_code || 'Articol' %></span>
+                <% if (rule.is_mandatory !== false) { %>
+                  <span class="badge mandatory-badge">OBLIGATORIU</span>
+                <% } else { %>
+                  <span class="badge optional-badge">OPȚIONAL</span>
+                <% } %>
+              </div>
+
+              <div class="rule-title"><%= rule.title || rule.name %></div>
+
+              <div class="rule-details">
+                <div class="detail-row">
+                  <span class="detail-label">Standard Părinte:</span>
+                  <span class="detail-value"><%= rule.standard_title || rule.standardName || 'Standard Asigurat' %></span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Pondere Audit:</span>
+                  <span class="detail-value" style="color: #34d399;"><%= rule.weight || rule.score_weight || '10' %> pct</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <a href="/ComplianceRules/Edit/<%= rule.id %>" class="btn-edit">Editează</a>
+              <form action="/ComplianceRules/Delete/<%= rule.id %>" method="POST" onsubmit="return confirm('Sigur doriți să ștergeți această regulă?');" style="display:inline; flex:1;">
+                <button type="submit" class="btn-delete" style="width:100%;">Șterge</button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="empty-state">
+          Nu există reguli de conformitate înregistrate în sistem momentan.
+        </div>
+      <% } %>
+    </div>
+
+    <a href="/Admin" class="back-link">&larr; Înapoi la Dashboard</a>
+  </div>
+
+</body>
+</html>

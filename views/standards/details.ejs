@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>EUCheck Admin - Detalii Directivă</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --card-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; }
+
+    /* Navbar Unificat */
+    .navbar {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand { font-size: 1.25rem; font-weight: 700; color: #fff; }
+    .brand span { color: var(--accent-blue); }
+    .nav-links { display: flex; gap: 8px; align-items: center; }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* Container Principal */
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* Profil Card Principal */
+    .profile-card {
+      background: var(--card-gradient);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 5px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+    }
+
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 25px;
+    }
+    .directive-code {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-blue);
+      margin-bottom: 8px;
+    }
+    h1 { font-size: 1.8rem; font-weight: 700; color: #fff; line-height: 1.3; }
+
+    .status-badge {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-badge.inactive {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    /* Grid Informații */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 35px;
+    }
+    .info-item {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .info-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .info-value {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .info-value a {
+      color: #60a5fa;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .info-value a:hover { text-decoration: underline; }
+
+    /* Butoane Acțiune Rapidă */
+    .actions-bar {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+    .btn-edit {
+      background: var(--accent-blue);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    .btn-edit:hover { background: #2563eb; transform: translateY(-1px); }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s;
+    }
+    .btn-back:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar Unificat -->
+  <header class="navbar">
+    <div class="brand">EUCheck <span>Admin</span></div>
+    <nav class="nav-links">
+      <a href="/Admin">Dashboard</a>
+      <a href="/Accounts">Conturi</a>
+      <a href="/Standards" class="active">Directive UE</a>
+      <a href="/ComplianceRules">Reguli Conformitate</a>
+      <a href="/Admin/Plans">Pachete</a>
+      <a href="/Admin/Logs">Jurnal</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="profile-card">
+      
+      <div class="header-section">
+        <div>
+          <div class="directive-code"><%= standard.code || standard.directive_code %></div>
+          <h1><%= standard.title || standard.name %></h1>
+        </div>
+        <div>
+          <% if (standard.is_active !== false) { %>
+            <span class="status-badge">ACTIVĂ ÎN SISTEM</span>
+          <% } else { %>
+            <span class="status-badge inactive">INACTIVĂ</span>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Categorie Industrială</div>
+          <div class="info-value"><%= standard.category || 'Standard Industrial UE' %></div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">Versiune / Revizie</div>
+          <div class="info-value">v<%= standard.version || '1' %></div>
+        </div>
+
+        <div class="info-item" style="grid-column: span 2;">
+          <div class="info-label">URL Text Oficial (EUR-Lex)</div>
+          <div class="info-value">
+            <% if (standard.official_url) { %>
+              <a href="<%= standard.official_url %>" target="_blank"><%= standard.official_url %></a>
+            <% } else { %>
+              <span style="color: var(--text-muted); font-weight: 400;">Nespecificat</span>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-bar">
+        <a href="/Standards/Edit/<%= standard.id %>" class="btn-edit">Editează Directiva</a>
+        <a href="/Standards" class="btn-back">&larr; Înapoi la Listă</a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

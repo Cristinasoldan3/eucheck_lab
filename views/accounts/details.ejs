@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalii Cont Utilizator</title>
+  <style>
+    body { font-family: Segoe UI, Arial, sans-serif; margin: 30px; background: #f8f9fa; }
+    .box { background: white; padding: 25px; border-radius: 6px; border: 1px solid #ced4da; max-width: 600px; }
+    dt { font-weight: bold; margin-top: 10px; color: #495057; }
+    dd { margin-left: 0; margin-bottom: 8px; }
+    a { color: #007bff; text-decoration: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Detalii Cont Utilizator</h2>
+  <div class="box">
+    <dl>
+      <dt>Email de autentificare:</dt>
+      <dd><%= account.email %></dd>
+
+      <dt>Nume Complet / Reprezentant:</dt>
+      <dd><%= account.full_name || 'Nespecificat' %></dd>
+
+      <dt>Denumire Firmă & CUI:</dt>
+      <dd><%= account.company_name ? account.company_name + ' | CUI: ' + account.vat_number : 'Cont individual (fără firmă)' %></dd>
+
+      <dt>Pachet de audit curent:</dt>
+      <dd><strong><%= account.tier %></strong></dd>
+
+      <dt>Balanță Credite (Tokeni):</dt>
+      <dd><%= account.tokens_balance %> scanări disponibile</dd>
+
+      <dt>Export Raport PDF:</dt>
+      <dd><%= account.can_export_pdf ? 'Activ' : 'Inactiv' %></dd>
+
+      <dt>Scanări Nelimitate (Enterprise):</dt>
+      <dd><%= account.has_unlimited_scans ? 'Da' : 'Nu' %></dd>
+
+      <dt>Rol de Administrator:</dt>
+      <dd><%= account.is_admin ? 'DA (Are acces la panoul admin)' : 'NU' %></dd>
+    </dl>
+    <hr />
+    <a href="/Accounts/Edit/<%= account.id %>">Modifică Drepturi</a> |
+    <a href="/Accounts">Înapoi la Listă</a>
+  </div>
+</body>
+</html>

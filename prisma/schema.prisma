@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id                  Int                   @id @default(autoincrement())
+  email               String                @unique @db.VarChar(255)
+  password_hash       String                @db.VarChar(255)
+  full_name           String?               @db.VarChar(255)
+  is_company          Boolean?              @default(false)
+  company_name        String?               @db.VarChar(255)
+  vat_number          String?               @db.VarChar(50)
+  billing_address     String?
+  country             String?               @db.VarChar(100)
+  tier                String?               @default("STARTER") @db.VarChar(50)
+  tokens_balance      Int                   @default(1)
+  can_export_pdf      Boolean?              @default(false)
+  has_unlimited_scans Boolean?              @default(false)
+  has_lab_discounts   Boolean?              @default(false)
+  is_admin            Boolean?              @default(false)
+  created_at          DateTime?             @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?             @default(now()) @db.Timestamp(6)
+  admin_activity_logs admin_activity_logs[]
+  audit_reports       audit_reports[]
+  orders              orders[]
+  technical_dossiers  technical_dossiers[]
+  audit_feedbacks     audit_feedbacks[]
+}
+
+model admin_activity_logs {
+  id               Int       @id @default(autoincrement())
+  admin_account_id Int
+  action_type      String    @db.VarChar(100)
+  target_table     String    @db.VarChar(100)
+  target_id        Int?
+  description      String?
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+  accounts         accounts  @relation(fields: [admin_account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model audit_reports {
+  id                 Int                 @id @default(autoincrement())
+  account_id         Int
+  dossier_id         Int?
+  standard_id        Int
+  file_name          String              @db.VarChar(255)
+  score              Int
+  passed_rules       Json
+  missing_rules      Json
+  created_at         DateTime?           @default(now()) @db.Timestamp(6)
+  accounts           accounts            @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  technical_dossiers technical_dossiers? @relation(fields: [dossier_id], references: [id], onUpdate: NoAction)
+  standards          standards           @relation(fields: [standard_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model compliance_rules {
+  id               Int       @id @default(autoincrement())
+  standard_id      Int
+  clause_reference String    @db.VarChar(100)
+  title            String    @db.VarChar(255)
+  keywords         String[]
+  weight           Int?      @default(1)
+  is_mandatory     Boolean?  @default(true)
+  recommendation   String?
+  standards        standards @relation(fields: [standard_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model dossier_components {
+  id                 Int                @id @default(autoincrement())
+  dossier_id         Int
+  component_name     String             @db.VarChar(255)
+  has_ce_mark        Boolean?           @default(false)
+  is_rohs_compliant  Boolean?           @default(false)
+  technical_dossiers technical_dossiers @relation(fields: [dossier_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model orders {
+  id                  Int       @id @default(autoincrement())
+  account_id          Int
+  checkout_session_id String?   @db.VarChar(255)
+  tier_bought         String    @db.VarChar(50)
+  tokens_added        Int
+  amount_paid_eur     Decimal   @db.Decimal(10, 2)
+  status              String?   @default("PENDING") @db.VarChar(50)
+  invoice_name        String?   @db.VarChar(255)
+  invoice_vat_number  String?   @db.VarChar(50)
+  created_at          DateTime? @default(now()) @db.Timestamp(6)
+  accounts            accounts  @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model standards {
+  id               Int                @id @default(autoincrement())
+  code             String             @unique @db.VarChar(50)
+  title            String             @db.VarChar(255)
+  category         Int
+  description      String?
+  is_active        Boolean            @default(true)
+  official_url     String?            @db.VarChar(500)
+  version          Int                @default(1)
+  compliance_rules compliance_rules[]
+  audit_reports    audit_reports[]
+}
+
+model subscription_plans_config {
+  id              Int      @id @default(autoincrement())
+  tier            String   @unique @db.VarChar(50)
+  display_name    String   @db.VarChar(100)
+  price_eur       Decimal  @db.Decimal(10, 2)
+  tokens_included Int
+  can_export_pdf  Boolean? @default(false)
+  features_list   Json
+  is_active       Boolean? @default(true)
+}
+
+model technical_dossiers {
+  id                 Int                  @id @default(autoincrement())
+  account_id         Int
+  title              String               @db.VarChar(255)
+  internal_reference String?              @db.VarChar(100)
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  audit_reports      audit_reports[]
+  dossier_components dossier_components[]
+  accounts           accounts             @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model audit_feedbacks {
+  id           Int      @id @default(autoincrement())
+  account_id   Int
+  rating       Int
+  comments     String?
+  submitted_at DateTime @default(now())
+  accounts     accounts @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}

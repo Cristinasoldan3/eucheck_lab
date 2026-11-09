@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>EUCheck Admin - Gestionare Conturi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #3b82f6;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; }
+
+    /* Navbar Unificat */
+    .navbar {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand { font-size: 1.25rem; font-weight: 700; color: #fff; }
+    .brand span { color: var(--accent-blue); }
+    .nav-links { display: flex; gap: 8px; align-items: center; }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* Container Principal */
+    .container { max-width: 1280px; margin: 40px auto; padding: 30px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    
+    .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    h2 { font-size: 1.5rem; font-weight: 600; color: #fff; }
+    p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* Tabel Modern */
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { background: rgba(255, 255, 255, 0.02); color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { color: #e2e8f0; font-size: 0.95rem; }
+    tr:hover td { background: rgba(255, 255, 255, 0.01); }
+
+    .badge { background: rgba(59, 130, 246, 0.15); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; }
+    .badge-b2b { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+
+    .actions-cell { display: flex; gap: 10px; align-items: center; }
+    .btn-edit { background: var(--accent-blue); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: background 0.2s; }
+    .btn-edit:hover { background: #2563eb; }
+    
+    .btn-delete { background: rgba(239, 68, 68, 0.15); color: #f87171; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-delete:hover { background: rgba(239, 68, 68, 0.3); }
+
+    .back-link { display: inline-block; margin-top: 25px; color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+    .back-link:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar Unificat pe toate paginile -->
+  <header class="navbar">
+    <div class="brand">EUCheck <span>Admin</span></div>
+    <nav class="nav-links">
+      <a href="/Admin">Dashboard</a>
+      <a href="/Accounts" class="active">Conturi</a>
+      <a href="/Standards">Directive UE</a>
+      <a href="/ComplianceRules">Reguli</a>
+      <a href="/Admin/Plans">Pachete</a>
+      <a href="/Admin/Logs">Jurnal</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="header-flex">
+      <div>
+        <h2>Gestionare Conturi Utilizatori</h2>
+        <p>Monitorizează conturile înregistrate, soldul de tokeni și datele firmelor B2B.</p>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Email Utilizator</th>
+          <th>Companie / CUI (B2B)</th>
+          <th>Nivel Pachet (Tier)</th>
+          <th>Balanță Tokeni</th>
+          <th>Export PDF</th>
+          <th>Acțiuni Administrator</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (typeof accounts !== 'undefined' && accounts.length > 0) { %>
+          <% accounts.forEach(function(acc) { %>
+            <tr>
+              <td><strong><%= acc.email %></strong></td>
+              <td>
+                <% if (acc.is_company || acc.company_name) { %>
+                  <span class="badge badge-b2b"><%= acc.company_name || 'Firmă B2B' %></span>
+                  <br><small style="color: var(--text-muted);"><%= acc.vat_number %></small>
+                <% } else { %>
+                  <span style="color: var(--text-muted);">Persoană Fizică</span>
+                <% } %>
+              </td>
+              <td><span class="badge"><%= acc.tier %></span></td>
+              <td><strong><%= acc.tokens_balance %> tokeni</strong></td>
+              <td><%= acc.can_export_pdf ? 'DA' : 'NU' %></td>
+              <td class="actions-cell">
+                <a href="/Accounts/Edit/<%= acc.id %>" class="btn-edit">Editează</a>
+                <form action="/Accounts/Delete/<%= acc.id %>" method="POST" onsubmit="return confirm('Sigur doriți să ștergeți acest cont?');" style="display:inline;">
+                  <button type="submit" class="btn-delete">Șterge</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Nu există conturi înregistrate în baza de date momentan.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <a href="/Admin" class="back-link">&larr; Înapoi la Dashboard</a>
+  </div>
+
+</body>
+</html>
